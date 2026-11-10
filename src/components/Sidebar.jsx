@@ -5,6 +5,7 @@ import {
   TrendingUp,
   LayoutGrid,
   FileText,
+  Columns3,
   Database,
   Sparkles,
   Settings,
@@ -16,7 +17,8 @@ const navItems = [
   { id: 'analytics', label: 'Кривая зрелости', icon: TrendingUp, description: 'Hype Cycle 5 фаз' },
   { id: 'strategy', label: 'Квадрант поставщиков', icon: LayoutGrid, description: 'Magic Quadrant 2x2' },
   { id: 'card', label: 'Досье вендора', icon: FileText, description: 'Карточка Fireblocks / BitGo' },
-  { id: 'sources', label: 'Источники данных', icon: Database, description: 'Реестр верификации и аудит' },
+  { id: 'compare', label: 'Сравнение вендоров', icon: Columns3, description: 'Head-to-Head для Правления' },
+  { id: 'sources', label: 'Источники данных', icon: Database, description: 'Реестр первоисточников и аудит' },
   { id: 'copilot', label: 'InDan AI', icon: Sparkles, description: 'ИИ-советник CIO и диалог' },
 ];
 

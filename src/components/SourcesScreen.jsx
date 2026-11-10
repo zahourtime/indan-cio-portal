@@ -1,10 +1,18 @@
-import React from 'react';
-import { Database, ShieldAlert, Ban, Info, CheckCircle2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Database, ShieldAlert, Ban, Info, CheckCircle2, Library, ListChecks } from 'lucide-react';
 import { usePortalData } from '../context/PortalDataContext';
+import EvidenceCatalog from './EvidenceCatalog';
 
-export default function SourcesScreen() {
+const TABS = [
+  { id: 'catalog', label: 'Реестр первоисточников', icon: Library },
+  { id: 'methodology', label: 'Методология и исключения', icon: ListChecks },
+];
+
+export default function SourcesScreen({ initialFilters, onNavigateToVendor }) {
   const { data } = usePortalData();
   const { trusted, excluded } = data.sources;
+  const [tab, setTab] = useState('catalog');
+  const docCount = data.evidenceCatalog?.documents?.length ?? 0;
 
   return (
     <div className="min-w-0">
@@ -16,7 +24,7 @@ export default function SourcesScreen() {
           </h1>
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-[11px] px-3 py-1 rounded-xl bg-white/[0.04] border border-white/10 text-zinc-300 font-mono shadow-sm">
-              5 категорий • Сквозная верификация
+              {docCount} документов • 5 категорий • Сквозная верификация
             </span>
           </div>
         </div>
@@ -24,8 +32,33 @@ export default function SourcesScreen() {
         <p className="text-sm text-zinc-300 max-w-4xl font-sans leading-relaxed">
           Реестр проверяемых открытых источников (OCC, NYDFS, MiCA, EIP/BIP, NIST), отчётов Big-4 и жесткие критерии исключения недостоверных данных.
         </p>
+
+        <div className="flex flex-wrap gap-2 mt-4" role="tablist">
+          {TABS.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              role="tab"
+              aria-selected={tab === id}
+              onClick={() => setTab(id)}
+              className={`px-4 py-2 rounded-xl text-xs font-medium inline-flex items-center gap-2 border transition-all cursor-pointer ${
+                tab === id
+                  ? 'bg-white/[0.08] border-white/20 text-white font-semibold shadow-sm'
+                  : 'bg-white/[0.03] border-white/10 text-zinc-400 hover:text-white hover:bg-white/[0.06]'
+              }`}
+            >
+              <Icon className="w-3.5 h-3.5" />
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
+      {tab === 'catalog' && (
+        <EvidenceCatalog initialFilters={initialFilters} onNavigateToVendor={onNavigateToVendor} />
+      )}
+
+      {tab === 'methodology' && (
+      <>
       {/* Two-column layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6 items-start min-w-0">
         {/* LEFT — Откуда данные */}
@@ -104,6 +137,8 @@ export default function SourcesScreen() {
           </p>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }

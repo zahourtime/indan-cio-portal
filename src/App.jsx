@@ -5,6 +5,7 @@ import HypeCycleScreen from './components/HypeCycleScreen';
 import QuadrantScreen from './components/QuadrantScreen';
 import VendorDossierScreen from './components/VendorDossierScreen';
 import SourcesScreen from './components/SourcesScreen';
+import ComparisonScreen from './components/ComparisonScreen';
 import AICopilotModal from './components/AICopilotModal';
 import { Search, Sparkles, ShieldCheck, RefreshCw, BarChart3, Radio, AlertTriangle, CheckCircle2, Activity } from 'lucide-react';
 import { PortalDataProvider, usePortalData } from './context/PortalDataContext';
@@ -27,6 +28,8 @@ function PortalAppMain() {
   const [isCopilotOpen, setIsCopilotOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  // Deep-link filters for the Evidence Catalog (e.g. { vendor: 'bitgo' }); `nonce` remounts the screen.
+  const [sourcesFilter, setSourcesFilter] = useState(null);
 
   // Live search calculation across vendors, technologies, and signals
   const searchResults = useMemo(() => {
@@ -50,12 +53,19 @@ function PortalAppMain() {
       s.impact.toLowerCase().includes(q)
     );
 
-    const totalCount = matchedVendors.length + matchedTech.length + matchedSignals.length;
+    const matchedDocs = (portalData.evidenceCatalog?.documents || []).filter(d =>
+      d.title.toLowerCase().includes(q) ||
+      d.identifier.toLowerCase().includes(q) ||
+      d.authority.toLowerCase().includes(q)
+    ).slice(0, 8);
+
+    const totalCount = matchedVendors.length + matchedTech.length + matchedSignals.length + matchedDocs.length;
 
     return {
       vendors: matchedVendors,
       technologies: matchedTech,
       signals: matchedSignals,
+      documents: matchedDocs,
       totalCount,
     };
   }, [searchQuery, portalData]);
@@ -64,8 +74,15 @@ function PortalAppMain() {
     if (screenId === 'copilot') {
       setIsCopilotOpen(true);
     } else {
+      if (screenId === 'sources') setSourcesFilter(null);
       setActiveScreen(screenId);
     }
+  };
+
+  // Open the Evidence Catalog pre-filtered (vendor / group / free-text query)
+  const handleOpenEvidence = (filters) => {
+    setSourcesFilter({ ...filters, nonce: Date.now() });
+    setActiveScreen('sources');
   };
 
   const handleNavigateToVendor = (vendorId) => {
@@ -264,6 +281,32 @@ function PortalAppMain() {
                         </div>
                       )}
 
+                      {/* Evidence documents */}
+                      {searchResults.documents.length > 0 && (
+                        <div className="space-y-1.5">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 px-1 block">
+                            Первоисточники ({searchResults.documents.length})
+                          </span>
+                          {searchResults.documents.map(d => (
+                            <button
+                              key={d.id}
+                              onClick={() => {
+                                handleOpenEvidence({ query: d.title });
+                                setSearchQuery('');
+                              }}
+                              className="w-full text-left p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/15 transition-all group cursor-pointer"
+                            >
+                              <div className="text-xs font-semibold text-white group-hover:text-emerald-400 transition-colors truncate">
+                                {d.title}
+                              </div>
+                              <div className="text-[11px] text-zinc-400 truncate mt-0.5">
+                                {d.authority} • {d.identifier}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
                       {/* Signals */}
                       {searchResults.signals.length > 0 && (
                         <div className="space-y-1.5">
@@ -326,6 +369,14 @@ function PortalAppMain() {
           {activeScreen === 'strategy' && (
             <QuadrantScreen 
               onNavigateToVendor={handleNavigateToVendor}
+              onOpenEvidence={handleOpenEvidence}
+            />
+          )}
+
+          {activeScreen === 'compare' && (
+            <ComparisonScreen
+              onNavigateToVendor={handleNavigateToVendor}
+              onOpenEvidence={handleOpenEvidence}
             />
           )}
 
@@ -334,11 +385,16 @@ function PortalAppMain() {
               vendorId={selectedVendor}
               onBack={() => setActiveScreen('strategy')}
               onSelectVendor={(vId) => setSelectedVendor(vId)}
+              onOpenEvidence={handleOpenEvidence}
             />
           )}
 
           {activeScreen === 'sources' && (
-            <SourcesScreen />
+            <SourcesScreen
+              key={sourcesFilter?.nonce ?? 'default'}
+              initialFilters={sourcesFilter}
+              onNavigateToVendor={handleNavigateToVendor}
+            />
           )}
 
           {activeScreen === 'settings' && (

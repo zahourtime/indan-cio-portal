@@ -15,7 +15,7 @@ const ZONE_LABELS = {
   niche: 'Нишевые',
 };
 
-export default function VendorDossierScreen({ vendorId, onBack, onSelectVendor }) {
+export default function VendorDossierScreen({ vendorId, onBack, onSelectVendor, onOpenEvidence }) {
   const { data } = usePortalData();
   const [activeId, setActiveId] = useState(vendorId || 'fireblocks');
 
@@ -468,6 +468,14 @@ export default function VendorDossierScreen({ vendorId, onBack, onSelectVendor }
                     <span>Реестр регулятора</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
+                )}
+                {onOpenEvidence && (
+                  <button
+                    onClick={() => onOpenEvidence({ vendor: dossier.id })}
+                    className="text-[11px] px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-zinc-300 hover:text-white hover:border-white/20 inline-flex items-center gap-1.5 transition-all shadow-sm shrink-0 font-medium cursor-pointer"
+                  >
+                    <span>Все первоисточники</span>
+                  </button>
                 )}
               </div>
             </div>

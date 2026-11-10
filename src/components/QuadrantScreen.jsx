@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef, useCallback } from 'react';
 import { Building2, Layers, ShieldCheck, Info, AlertTriangle, Radio } from 'lucide-react';
 import { usePortalData } from '../context/PortalDataContext';
+import ScoringBreakdown from './ScoringBreakdown';
 
 const ZONE_ORDER = ['leaders', 'challengers', 'visionaries', 'niche'];
 const ZONE_LABELS = {
@@ -52,7 +53,7 @@ const toY = (execution) => {
   return 200 + ((3.5 - execution) / 2.5) * 145;
 };
 
-export default function QuadrantScreen({ onNavigateToVendor }) {
+export default function QuadrantScreen({ onNavigateToVendor, onOpenEvidence }) {
   const { data } = usePortalData();
   const { vendors, axisX, axisY } = data.quadrant;
 
@@ -339,6 +340,9 @@ export default function QuadrantScreen({ onNavigateToVendor }) {
           </div>
         </div>
       </div>
+
+      {/* ── Transparent scoring formula ── */}
+      <ScoringBreakdown onOpenEvidence={onOpenEvidence} />
     </div>
   );
 }
