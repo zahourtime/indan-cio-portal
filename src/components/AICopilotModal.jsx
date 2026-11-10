@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   X, Sparkles, Sliders, CheckCircle2, Copy, FileDown, ExternalLink, 
-  Send, Bot, User, Key, RefreshCw, AlertTriangle, ShieldCheck, CornerDownLeft, Printer, Globe 
+  Send, Bot, User, RefreshCw, AlertTriangle, ShieldCheck, CornerDownLeft, Printer, Globe 
 } from 'lucide-react';
 import { usePortalData } from '../context/PortalDataContext';
+import Markdown from './Markdown';
 
 export default function AICopilotModal({ isOpen, onClose, onNavigateToSources }) {
   if (!isOpen) return null;
@@ -20,11 +21,8 @@ export default function AICopilotModal({ isOpen, onClose, onNavigateToSources })
   const [micaEnabled, setMicaEnabled] = useState(true);
   const [auditProofEnabled, setAuditProofEnabled] = useState(true);
   
-  // API key from localStorage or Vite environment variable
-  const [apiKey, setApiKey] = useState(() => 
-    localStorage.getItem('indan_gemini_api_key') || import.meta.env.VITE_GEMINI_API_KEY || ''
-  );
-  const [showKeyInput, setShowKeyInput] = useState(false);
+  // API key comes only from the Vite environment variable, there is no key field in the UI
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
   const [lastApiStatus, setLastApiStatus] = useState(null); // { type: 'success' | 'error', message: string }
 
   // Chat conversation state
@@ -53,14 +51,6 @@ export default function AICopilotModal({ isOpen, onClose, onNavigateToSources })
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
-
-  const handleSaveApiKey = (key) => {
-    const cleanKey = key.trim();
-    setApiKey(cleanKey);
-    localStorage.setItem('indan_gemini_api_key', cleanKey);
-    setShowKeyInput(false);
-    setLastApiStatus(null);
-  };
 
   /**
    * Action trigger: Export to PDF / Print
@@ -258,7 +248,7 @@ export default function AICopilotModal({ isOpen, onClose, onNavigateToSources })
 
 **Стадия на кривой Gartner Hype Cycle:** **«Склон прояснения» (Slope of Enlightenment)**  
 **Рекомендуемый горизонт внедрения:** **Q2 2027 (Пилотный проект — текущий квартал)**  
-**Вердикт InDan:** **ПОДОЖДАТЬ для Ethereum L1 // КУПИТЬ / ПИЛОТИРОВАТЬ для L2 (Base, Arbitrum, приватный контур)**
+**Вердикт InDan:** **ПОДОЖДАТЬ для Ethereum L1 · КУПИТЬ / ПИЛОТИРОВАТЬ для L2 (Base, Arbitrum, приватный контур)**
 
 #### 1. Почему банку нужен ERC-4337:
 1. **Полный отказ от seed-фраз (12 слов):** Вход в кошелек осуществляется через FaceID/TouchID с использованием аппаратного чипа смартфона (Secure Enclave) по стандарту **W3C WebAuthn (Passkeys)**.
@@ -393,12 +383,8 @@ ${hasOutage
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold text-white tracking-wide truncate">
-                  InDan AI // Интеллектуальный ИИ-ассистент
+                  InDan AI · Интеллектуальный ИИ-ассистент
                 </h2>
-                <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  {lastApiStatus?.type === 'success' ? lastApiStatus.message : 'Adaptive Domain Engine'}
-                </span>
               </div>
               <p className="text-xs text-zinc-400 truncate">
                 Инфраструктура кошельков, эквайринг, аудит безопасности и записки для Инвесткомитета
@@ -437,18 +423,6 @@ ${hasOutage
               <span className="hidden md:inline font-mono text-[11px]">PDF</span>
             </button>
 
-            {/* Gemini API Key Toggle */}
-            <button
-              onClick={() => setShowKeyInput(!showKeyInput)}
-              className={`p-2 rounded-xl text-xs border transition-all cursor-pointer shadow-sm flex items-center gap-1.5 ${
-                apiKey ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20' : 'bg-white/[0.04] text-zinc-400 border-white/10 hover:text-white'
-              }`}
-              title="Настройка внешнего LLM ключа (Google Gemini)"
-            >
-              <Key className="w-4 h-4" />
-              <span className="hidden lg:inline text-[11px] font-mono">{apiKey ? 'Gemini Key Saved' : 'Set API Key'}</span>
-            </button>
-
             {/* Close */}
             <button 
               onClick={onClose}
@@ -458,40 +432,6 @@ ${hasOutage
             </button>
           </div>
         </header>
-
-        {/* API Key Banner / Input */}
-        {showKeyInput && (
-          <div className="px-6 py-3 bg-white/[0.04] border-b border-white/10 flex flex-wrap items-center justify-between gap-3 animate-slide-up text-xs">
-            <div className="flex items-center gap-2 text-zinc-300">
-              <Sparkles className="w-4 h-4 text-emerald-400" />
-              <span>Google Gemini API Key:</span>
-            </div>
-            <div className="flex items-center gap-2 flex-1 max-w-md">
-              <input
-                type="password"
-                placeholder="Вставьте AQ... или AIzaSy..."
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                className="flex-1 px-3 py-1.5 rounded-lg bg-black/40 border border-white/15 text-white font-mono text-xs focus:outline-none focus:border-emerald-400"
-              />
-              <button
-                onClick={() => handleSaveApiKey(apiKey)}
-                className="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-medium hover:bg-emerald-500/30 cursor-pointer"
-              >
-                Сохранить
-              </button>
-              {apiKey && (
-                <button
-                  onClick={() => handleSaveApiKey('')}
-                  className="px-2 py-1.5 rounded-lg bg-red-500/10 text-red-300 border border-red-500/20 text-xs cursor-pointer"
-                  title="Очистить ключ"
-                >
-                  Сброс
-                </button>
-              )}
-            </div>
-          </div>
-        )}
 
         {/* API Geo Warning if detected */}
         {lastApiStatus?.type === 'error' && (
@@ -644,9 +584,11 @@ ${hasOutage
                             ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-100'
                             : 'bg-white/[0.04] border-white/10 text-zinc-200'
                         }`}>
-                          <div className="whitespace-pre-wrap font-sans space-y-2">
-                            {msg.text}
-                          </div>
+                          {msg.role === 'assistant' ? (
+                            <Markdown text={msg.text} />
+                          ) : (
+                            <div className="whitespace-pre-wrap font-sans break-words">{msg.text}</div>
+                          )}
 
                           {msg.role === 'assistant' && (
                             <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between text-zinc-400 text-[11px]">

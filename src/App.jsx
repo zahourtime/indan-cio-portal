@@ -203,7 +203,12 @@ function PortalAppMain() {
               {/* Live Search Results Dropdown */}
               {searchResults && (
                 <div 
-                  style={{ width: '420px', maxHeight: '440px' }}
+                  style={{
+                    width: '420px',
+                    maxHeight: '440px',
+                    // Opaque surface: the glass-panel background is translucent and the page text showed through
+                    background: 'rgba(14, 14, 18, 0.98)',
+                  }}
                   className="absolute top-full mt-2 left-0 glass-panel-static p-4 border border-white/15 rounded-2xl shadow-[0_16px_48px_rgba(0,0,0,0.85)] z-50 overflow-y-auto space-y-3"
                 >
                   <div className="flex items-center justify-between pb-2 border-b border-white/10 text-[11px] font-mono text-zinc-400">

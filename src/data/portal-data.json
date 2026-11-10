@@ -29,6 +29,56 @@
       "verifiedDate": "08.11.2026 18:41"
     },
     {
+      "id": "coinbase-custody",
+      "name": "Coinbase Custody",
+      "type": "vendor",
+      "category": "Кастодиальный",
+      "verdict": "buy",
+      "reason": "Крупнейший кастодиан ETF (8 из 11 спотовых BTC-ETF): трастовая лицензия NYDFS с 2018 г., аудит Deloitte, холодное хранение. Чартера OCC нет, страховой лимит не раскрыт.",
+      "sourceUrl": "https://www.coinbase.com/prime/custody",
+      "verifiedDate": "08.11.2026 18:41"
+    },
+    {
+      "id": "anchorage",
+      "name": "Anchorage Digital",
+      "type": "vendor",
+      "category": "Кастодиальный",
+      "verdict": "buy",
+      "reason": "Первый федеральный криптобанк США: чартер OCC 25243, ключи только в HSM банка, SOC 2 от EY. Предписание OCC 2022 г. закрыто в 2025 г., страховой лимит не раскрыт.",
+      "sourceUrl": "https://www.occ.gov/news-issuances/news-releases/2021/nr-occ-2021-6.html",
+      "verifiedDate": "08.11.2026 18:41"
+    },
+    {
+      "id": "ledger-enterprise",
+      "name": "Ledger Enterprise",
+      "type": "vendor",
+      "category": "Аппаратный",
+      "verdict": "buy",
+      "reason": "Технология для собственного HSM-контура банка: Dedicated HSM EAL5+, 0 взломов Enterprise с 2019 г. Лицензии кастодиана нет, контур банк эксплуатирует сам.",
+      "sourceUrl": "https://enterprise.ledger.com",
+      "verifiedDate": "2026-10-26"
+    },
+    {
+      "id": "komainu",
+      "name": "Komainu",
+      "type": "vendor",
+      "category": "Кастодиальный",
+      "verdict": "buy",
+      "reason": "Регулируемый хранитель JFSC (Джерси) с регистрацией FCA и VARA, СП Nomura, Ledger и CoinShares. Лицензий США и ЕС нет, публичных отчётов SOC нет: подходит как резервный кастодиан.",
+      "sourceUrl": "https://www.komainu.com",
+      "verifiedDate": "2026-10-26"
+    },
+    {
+      "id": "dfns",
+      "name": "Dfns",
+      "type": "vendor",
+      "category": "MPC",
+      "verdict": "hold",
+      "reason": "API-first WaaS с MPC 3-of-5 и Passkey (Vision 4.5), но Execution 3.6: кастодиальной лицензии CASP нет. Подходит для пилота клиентского контура.",
+      "sourceUrl": "https://www.dfns.co",
+      "verifiedDate": "2026-10-26"
+    },
+    {
       "id": "custodial-storage",
       "name": "Кастодиальное лицензированное хранение",
       "type": "technology",

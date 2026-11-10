@@ -33,6 +33,15 @@ const SIGNAL_COLORS = {
   warning: { bg: 'bg-amber-400', label: 'Срочный сигнал' },
 };
 
+/** 1 объект, 2–4 объекта, 5+ объектов */
+function pluralObjects(n) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return 'объект';
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'объекта';
+  return 'объектов';
+}
+
 function DecisionCard({ decision, onNavigateToVendor }) {
   const isVendor = decision.type === 'vendor';
   const typeLabel = isVendor ? 'Поставщик' : 'Технология';
@@ -105,7 +114,6 @@ function DecisionCard({ decision, onNavigateToVendor }) {
             </>
           ) : (
             <>
-              <span>ROI: <strong className="text-zinc-200 font-medium">+14.5%</strong></span>
               <span>Риск: <strong className="text-zinc-200 font-medium">Контролируемый</strong></span>
             </>
           )}
@@ -151,7 +159,7 @@ function VerdictColumn({ verdict, decisions, onNavigateToVendor }) {
             </h3>
           </div>
           <span className={`badge ${config.badgeClass} px-3 py-1 rounded-xl shrink-0`}>
-            {filtered.length} объекта
+            {filtered.length} {pluralObjects(filtered.length)}
           </span>
         </div>
         <p className="text-xs text-zinc-400 leading-relaxed font-sans pr-2">
