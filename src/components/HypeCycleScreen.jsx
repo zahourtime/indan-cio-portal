@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import {
   ShieldCheck,
   Key,
@@ -51,13 +51,31 @@ const TECH_COORDS = {
   'multisig': { x: 665, y: 188, labelX: 665, labelY: 172, textAnchor: 'middle', shortName: 'Мультиподпись' },
 };
 
-export default function HypeCycleScreen() {
+const VERDICT_DOT = {
+  buy: '#4ADE80',
+  hold: '#FACC15',
+  avoid: '#F87171',
+};
+
+export default function HypeCycleScreen({ onNavigateToVendor }) {
   const { data } = usePortalData();
   const [hoveredTech, setHoveredTech] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const svgRef = useRef(null);
 
   const technologies = data.hypeCycle || [];
+
+  // Vendors attached to the technologies (name + verdict come from the decision matrix on the home screen)
+  const vendorsById = useMemo(() => {
+    const map = {};
+    (data.decisions || []).forEach((d) => {
+      if (d.type === 'vendor') map[d.id] = d;
+    });
+    return map;
+  }, [data.decisions]);
+
+  const vendorsOf = (tech) => (tech.vendors || []).map((id) => vendorsById[id]).filter(Boolean);
+  const uniqueVendorCount = new Set(technologies.flatMap((t) => (t.vendors || []).filter((id) => vendorsById[id]))).size;
 
   const handleMouseEnter = useCallback((tech, e) => {
     const svgEl = svgRef.current;
@@ -84,7 +102,7 @@ export default function HypeCycleScreen() {
           </h1>
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-[11px] px-3 py-1 rounded-xl bg-white/[0.04] border border-white/10 text-zinc-300 font-mono shadow-sm">
-              8 технологий • 5 фаз
+              {technologies.length} технологий • {uniqueVendorCount} вендоров • 5 фаз
             </span>
           </div>
         </div>
@@ -235,6 +253,31 @@ export default function HypeCycleScreen() {
                     >
                       {config.shortName}
                     </text>
+
+                    {/* Vendor count badge */}
+                    {vendorsOf(tech).length > 0 && (
+                      <g>
+                        <circle
+                          cx={config.x + 10}
+                          cy={config.y - 10}
+                          r={8}
+                          fill="#0E0E12"
+                          stroke="rgba(255,255,255,0.45)"
+                          strokeWidth="1"
+                        />
+                        <text
+                          x={config.x + 10}
+                          y={config.y - 6.5}
+                          fill="#ffffff"
+                          fontSize="10"
+                          fontWeight="700"
+                          fontFamily="Inter, sans-serif"
+                          textAnchor="middle"
+                        >
+                          {vendorsOf(tech).length}
+                        </text>
+                      </g>
+                    )}
                   </g>
                 );
               })}
@@ -278,6 +321,19 @@ export default function HypeCycleScreen() {
                     <span className="text-zinc-500 block mb-0.5">Ключевой риск:</span>
                     <span className="break-words leading-tight text-zinc-300">{hoveredTech.risk}</span>
                   </div>
+                  {vendorsOf(hoveredTech).length > 0 && (
+                    <div className="text-[10px] pt-1 border-t border-white/5">
+                      <span className="text-zinc-500 block mb-1">Вендоры ({vendorsOf(hoveredTech).length}):</span>
+                      <div className="flex flex-wrap gap-x-2.5 gap-y-1">
+                        {vendorsOf(hoveredTech).map((v) => (
+                          <span key={v.id} className="inline-flex items-center gap-1 text-zinc-200">
+                            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: VERDICT_DOT[v.verdict] }} />
+                            {v.name}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -303,41 +359,66 @@ export default function HypeCycleScreen() {
             </span>
           </div>
 
-          <div className="flex flex-col gap-2 overflow-y-auto max-h-[460px] pr-1">
+          <div className="flex flex-col gap-2 overflow-y-auto max-h-[620px] pr-1">
             {technologies.map((tech) => {
               const isHovered = hoveredTech?.id === tech.id;
               const color = PHASE_COLORS[tech.phase] || '#fff';
               const Icon = TECH_ICONS[tech.id] || Sparkles;
 
+              const techVendors = vendorsOf(tech);
+
               return (
-                <button
+                <div
                   key={tech.id}
-                  onClick={() => setHoveredTech(isHovered ? null : tech)}
                   onMouseEnter={() => setHoveredTech(tech)}
                   onMouseLeave={() => setHoveredTech(null)}
-                  style={{
-                    paddingLeft: '20px',
-                    paddingRight: '18px',
-                    gap: '16px',
-                  }}
-                  className={`w-full flex items-center py-3 rounded-xl text-xs font-medium transition-all duration-200 cursor-pointer text-left group ${
+                  className={`w-full rounded-xl text-xs font-medium transition-all duration-200 group ${
                     isHovered
                       ? 'bg-white/[0.08] text-white shadow-sm border border-white/20 font-semibold'
                       : 'bg-white/[0.03] text-zinc-300 hover:text-white hover:bg-white/[0.06] border border-white/10 hover:border-white/20'
                   }`}
                 >
-                  <div className="w-5 flex items-center justify-center shrink-0">
-                    <Icon className="w-4 h-4 transition-colors" style={{ color: color }} />
-                  </div>
-                  <div className="flex flex-col min-w-0 flex-1">
-                    <span className="truncate text-xs font-semibold text-white">
-                      {tech.name}
-                    </span>
-                    <span className="text-[11px] text-zinc-400 group-hover:text-zinc-300 font-normal truncate mt-0.5">
-                      {tech.phaseName} • {tech.horizon}
-                    </span>
-                  </div>
-                </button>
+                  <button
+                    onClick={() => setHoveredTech(isHovered ? null : tech)}
+                    style={{
+                      paddingLeft: '20px',
+                      paddingRight: '18px',
+                      gap: '16px',
+                    }}
+                    className="w-full flex items-center py-3 cursor-pointer text-left"
+                  >
+                    <div className="w-5 flex items-center justify-center shrink-0">
+                      <Icon className="w-4 h-4 transition-colors" style={{ color: color }} />
+                    </div>
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <span className="truncate text-xs font-semibold text-white">
+                        {tech.name}
+                      </span>
+                      <span className="text-[11px] text-zinc-400 group-hover:text-zinc-300 font-normal truncate mt-0.5">
+                        {tech.phaseName} • {tech.horizon}
+                      </span>
+                    </div>
+                  </button>
+
+                  {techVendors.length > 0 && (
+                    <div
+                      className="flex flex-wrap gap-1.5"
+                      style={{ paddingLeft: '56px', paddingRight: '18px', paddingBottom: '12px' }}
+                    >
+                      {techVendors.map((v) => (
+                        <button
+                          key={v.id}
+                          onClick={() => onNavigateToVendor?.(v.id)}
+                          title={`Открыть досье: ${v.name}`}
+                          className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-medium border border-white/10 bg-white/[0.04] text-zinc-200 hover:bg-white/[0.1] hover:text-white cursor-pointer transition-colors"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: VERDICT_DOT[v.verdict] }} />
+                          {v.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               );
             })}
           </div>

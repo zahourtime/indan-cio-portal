@@ -368,7 +368,7 @@ function PortalAppMain() {
           )}
 
           {activeScreen === 'analytics' && (
-            <HypeCycleScreen />
+            <HypeCycleScreen onNavigateToVendor={handleNavigateToVendor} />
           )}
 
           {activeScreen === 'strategy' && (
