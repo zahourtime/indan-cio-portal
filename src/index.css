@@ -9,10 +9,13 @@
   --glass-highlight: rgba(255, 255, 255, 0.18);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* Reset lives in the base layer so Tailwind utilities (mx-auto, mt-*, px-2.5, …) can override it. */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 }
 
 body {
