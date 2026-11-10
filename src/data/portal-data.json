@@ -1,0 +1,813 @@
+{
+  "meta": {
+    "portalName": "ИнДан",
+    "portalNameEn": "InDan",
+    "subtitle": "Analytical AI Platform for Banking CIO",
+    "scenario": "Криптокошельки для банка: клиентский контур vs казначейство",
+    "disclaimer": "Учебная раскладка на открытых данных, не отчёт Gartner",
+    "lastUpdated": "08.11.2026 18:41 (Live Ingestion Stream)"
+  },
+  "decisions": [
+    {
+      "id": "bitgo",
+      "name": "BitGo",
+      "type": "vendor",
+      "category": "Кастодиальный",
+      "verdict": "buy",
+      "reason": "Квалифицированный кастодиан США: национальный чартер OCC 25366, лицензия BaFin (Германия), схема 2-of-3, открытая библиотека DKLs23 и синдицированный полис на $250 млн.",
+      "sourceUrl": "https://www.occ.gov/topics/charters-and-licensing/financial-institution-lists/trust-by-name.pdf",
+      "verifiedDate": "08.11.2026 18:41"
+    },
+    {
+      "id": "fireblocks",
+      "name": "Fireblocks",
+      "type": "vendor",
+      "category": "MPC",
+      "verdict": "buy",
+      "reason": "Институциональный MPC: Vault 3-of-3 (ключ не собирается целиком), чартер NYDFS Trust (авг. 2024), ежегодный SOC 2 Type II от EY и сертификат CCSS Level 3.",
+      "sourceUrl": "https://trust.fireblocks.com/",
+      "verifiedDate": "08.11.2026 18:41"
+    },
+    {
+      "id": "custodial-storage",
+      "name": "Кастодиальное лицензированное хранение",
+      "type": "technology",
+      "category": "Технология",
+      "verdict": "buy",
+      "reason": "Правовая база для казначейства: письмо OCC IL 1183 (отмена предварительных согласований) и регламент ЕС MiCA ст. 75 (правила CASP).",
+      "sourceUrl": "https://www.occ.gov/topics/charters-and-licensing/interpretations-and-actions/2025/int1183.pdf",
+      "verifiedDate": "2026-10-26"
+    },
+    {
+      "id": "fordefi",
+      "name": "Fordefi",
+      "type": "vendor",
+      "category": "MPC",
+      "verdict": "hold",
+      "reason": "DeFi MPC с симуляцией транзакций (Vision 4.6), но Execution 3.4: мало публичных банковских кейсов, требуется отдельный пилот.",
+      "sourceUrl": "https://www.fordefi.com",
+      "verifiedDate": "2026-10-26"
+    },
+    {
+      "id": "embedded-wallet",
+      "name": "Встроенный кошелёк в приложении (WaaS)",
+      "type": "technology",
+      "category": "Технология",
+      "verdict": "hold",
+      "reason": "Пик ожиданий: риск скрытого кастоди без лицензии; единого стандарта нет, требуется аудит модели ключей и изоляции анклава.",
+      "sourceUrl": "https://thepaypers.com/online-mobile-banking/stripe-to-acquire-privy-to-further-scale-web3-capabilities--1274043",
+      "verifiedDate": "2026-10-26"
+    },
+    {
+      "id": "passkey-tech",
+      "name": "Вход по passkey (WebAuthn / FIDO2)",
+      "type": "technology",
+      "category": "Технология",
+      "verdict": "hold",
+      "reason": "Стандарт W3C WebAuthn L3 финализирован в 2026 г.; мейннет Ethereum поддерживает P-256 (EIP-7951). Прямых внедрений в криптокошельках банков пока нет.",
+      "sourceUrl": "https://www.w3.org/TR/webauthn-3/",
+      "verifiedDate": "2026-10-26"
+    },
+    {
+      "id": "quantum-signatures",
+      "name": "Постквантовые подписи (NIST PQC)",
+      "type": "technology",
+      "category": "Технология",
+      "verdict": "avoid",
+      "reason": "Запуск (горизонт 5+ лет): сети BTC и ETH не поддерживают PQC в проде (BIP-360 в статусе draft); преждевременная закупка в текущем ИТ-бюджете.",
+      "sourceUrl": "https://csrc.nist.gov/pubs/fips/204/final",
+      "verifiedDate": "2026-10-26"
+    },
+    {
+      "id": "hardware-user-wallet",
+      "name": "Аппаратный кошелёк пользователя",
+      "type": "technology",
+      "category": "Технология",
+      "verdict": "avoid",
+      "reason": "Инструмент розничного клиента (сценарий «Ни один»). Казначейский холодный контур банка строится на промышленных модулях HSM.",
+      "sourceUrl": "https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki",
+      "verifiedDate": "2026-10-26"
+    }
+  ],
+  "signals": [
+    {
+      "id": "signal-1",
+      "title": "OCC подтвердил право банков США на криптокастоди (письмо IL 1183)",
+      "type": "regulatory",
+      "date": "2025-03-07",
+      "impact": "positive",
+      "affectedIds": [
+        "bitgo",
+        "anchorage",
+        "custodial-licensed"
+      ],
+      "sourceUrl": "https://www.occ.gov/topics/charters-and-licensing/interpretations-and-actions/2025/int1183.pdf"
+    },
+    {
+      "id": "signal-2",
+      "title": "Окончание переходного периода MiCA в ЕС: запрет работы без лицензии CASP",
+      "type": "regulatory",
+      "date": "2026-07-01",
+      "impact": "neutral",
+      "affectedIds": [
+        "bitgo",
+        "coinbase-custody",
+        "komainu"
+      ],
+      "sourceUrl": "https://eur-lex.europa.eu/eli/reg/2023/1114/oj"
+    },
+    {
+      "id": "signal-3",
+      "title": "W3C финализировал WebAuthn Level 3, а EIP-7951 добавил кривую P-256 в Ethereum",
+      "type": "technology",
+      "date": "2026-08-25",
+      "impact": "positive",
+      "affectedIds": [
+        "passkey-auth",
+        "smart-accounts",
+        "dfns"
+      ],
+      "sourceUrl": "https://www.w3.org/TR/webauthn-3/"
+    },
+    {
+      "id": "signal-4",
+      "title": "M&A консолидация WaaS: покупка Privy компанией Stripe и Dynamic компанией Fireblocks",
+      "type": "market",
+      "date": "2025-06-15",
+      "impact": "watch",
+      "affectedIds": [
+        "embedded-wallet-tech",
+        "fireblocks"
+      ],
+      "sourceUrl": "https://thepaypers.com/online-mobile-banking/stripe-to-acquire-privy-to-further-scale-web3-capabilities--1274043"
+    }
+  ],
+  "hypeCycle": [
+    {
+      "id": "hardware-wallet",
+      "name": "Аппаратный кошелёк пользователя",
+      "nameEn": "User Hardware Wallet",
+      "phase": 5,
+      "phaseName": "Плато",
+      "horizon": "Уже сейчас (для клиента)",
+      "scenario": "Ни один",
+      "risk": "Устройство не защищает от подмены транзакции в софте (кейс Connect Kit -k). Банку покупать нечего",
+      "standard": "BIP-39, BIP-32",
+      "sourceUrl": "https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki",
+      "verifiedDate": "2026-10-26",
+      "x": 620,
+      "y": 190
+    },
+    {
+      "id": "multisig",
+      "name": "Мультиподпись для казначейства (Safe)",
+      "nameEn": "Multisig for Treasury (Safe)",
+      "phase": 5,
+      "phaseName": "Плато",
+      "horizon": "Уже сейчас",
+      "scenario": "Казначейство банка",
+      "risk": "Кворум не спасает, если все видят транзакцию через скомпрометированный веб-интерфейс (кейс взлома Bybit ,5 млрд)",
+      "standard": "Safe Smart Account",
+      "sourceUrl": "https://docs.safe.global/advanced/smart-account-overview",
+      "verifiedDate": "2026-10-26",
+      "x": 665,
+      "y": 188
+    },
+    {
+      "id": "custodial-licensed",
+      "name": "Кастодиальное лицензированное хранение",
+      "nameEn": "Licensed Custody",
+      "phase": 4,
+      "phaseName": "Склон прояснения",
+      "horizon": "Уже сейчас",
+      "scenario": "Оба",
+      "risk": "Лицензия подтверждает регуляторный статус, а не техзащиту ключей; модель ключа проверять отдельно",
+      "standard": "OCC IL 1183, MiCA ст. 75",
+      "sourceUrl": "https://www.occ.gov/topics/charters-and-licensing/interpretations-and-actions/2025/int1183.pdf",
+      "verifiedDate": "2026-10-26",
+      "x": 570,
+      "y": 205
+    },
+    {
+      "id": "mpc-tss",
+      "name": "MPC / пороговая подпись (TSS, MPC-CMP)",
+      "nameEn": "MPC / Threshold Signatures",
+      "phase": 4,
+      "phaseName": "Склон прояснения",
+      "horizon": "Уже сейчас",
+      "scenario": "Оба",
+      "risk": "Безопасность зависит от реализации, единого стандарта NIST нет (в 2023 BitForge показал уязвимости GG18/GG20; переход на CGGMP21)",
+      "standard": "CGGMP21, NIST IR 8214C",
+      "sourceUrl": "https://eprint.iacr.org/2021/060",
+      "verifiedDate": "2026-10-26",
+      "x": 520,
+      "y": 225
+    },
+    {
+      "id": "smart-accounts",
+      "name": "Смарт-счета и абстракция аккаунта (ERC-4337)",
+      "nameEn": "Account Abstraction (ERC-4337)",
+      "phase": 4,
+      "phaseName": "Склон прояснения",
+      "horizon": "Около 2 лет",
+      "scenario": "Клиентский контур",
+      "risk": "Ошибка в логике смарт-контракта аккаунта или paymaster превращается в потерю средств. Нет открытых банковских внедрений",
+      "standard": "ERC-4337",
+      "sourceUrl": "https://eips.ethereum.org/EIPS/eip-4337",
+      "verifiedDate": "2026-10-26",
+      "x": 470,
+      "y": 250
+    },
+    {
+      "id": "passkey-auth",
+      "name": "Вход по passkey без сид-фразы (WebAuthn)",
+      "nameEn": "Passkey Auth (WebAuthn / FIDO2)",
+      "phase": 4,
+      "phaseName": "Склон прояснения",
+      "horizon": "Около 2 лет",
+      "scenario": "Клиентский контур",
+      "risk": "Привязка к устройству без облачной синхронизации ведёт к утрате доступа. Банковских внедрений в крипте пока нет",
+      "standard": "W3C WebAuthn Level 3, EIP-7951",
+      "sourceUrl": "https://www.w3.org/TR/webauthn-3/",
+      "verifiedDate": "2026-10-26",
+      "x": 420,
+      "y": 285
+    },
+    {
+      "id": "embedded-wallet-tech",
+      "name": "Встроенный кошелёк в приложении (WaaS)",
+      "nameEn": "Embedded Wallet (WaaS)",
+      "phase": 2,
+      "phaseName": "Пик ожиданий",
+      "horizon": "Около 2 лет",
+      "scenario": "Клиентский контур",
+      "risk": "«Некастодиальный» в рекламе может скрывать доступ провайдера; риск получить скрытое кастоди без лицензии. Единого стандарта нет",
+      "standard": "Единого стандарта нет (Privy, Dynamic, WaaS)",
+      "sourceUrl": "https://thepaypers.com/online-mobile-banking/stripe-to-acquire-privy-to-further-scale-web3-capabilities--1274043",
+      "verifiedDate": "2026-10-26",
+      "x": 205,
+      "y": 48
+    },
+    {
+      "id": "quantum-sig",
+      "name": "Подписи, устойчивые к квантовым компьютерам (NIST PQC)",
+      "nameEn": "Post-Quantum Signatures (NIST PQC)",
+      "phase": 1,
+      "phaseName": "Запуск",
+      "horizon": "5+ лет (в блокчейнах)",
+      "scenario": "Ни один",
+      "risk": "«Квантово-устойчивый кошелёк» бесполезен, пока сами сети (BTC, ETH) не активируют постквантовые подписи (BIP-360 в draft)",
+      "standard": "FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), BIP-360",
+      "sourceUrl": "https://csrc.nist.gov/pubs/fips/204/final",
+      "verifiedDate": "2026-10-26",
+      "x": 85,
+      "y": 320
+    }
+  ],
+  "quadrant": {
+    "axisX": "Полнота видения",
+    "axisXEn": "Completeness of Vision",
+    "axisY": "Способность исполнить",
+    "axisYEn": "Ability to Execute",
+    "threshold": 3.5,
+    "vendors": [
+      {
+        "id": "bitgo",
+        "name": "BitGo",
+        "category": "Кастодиальный",
+        "execution": 4.9,
+        "vision": 4.4,
+        "zone": "leaders",
+        "zoneName": "Лидеры",
+        "executionNote": "Чартер OCC 25366 (BitGo Bank & Trust N.A.), лицензии NYDFS и BaFin, схема 2-of-3, открытая библиотека DKLs23",
+        "visionNote": "Полноценный охват обоих контуров банка (self-custody + qualified trust)",
+        "sourceUrl": "https://www.bitgo.com",
+        "verifiedDate": "2026-10-26"
+      },
+      {
+        "id": "fireblocks",
+        "name": "Fireblocks",
+        "category": "MPC",
+        "execution": 4.8,
+        "vision": 4.7,
+        "zone": "leaders",
+        "zoneName": "Лидеры",
+        "executionNote": "Чартер NYDFS Trust (авг. 2024), SOC 2 Type II от EY (2019+), CCSS Level 3; OCC в открытых реестрах нет",
+        "visionNote": "MPC-CMP платформа + WaaS + токенизация + Direct Vault 3-of-3",
+        "sourceUrl": "https://www.fireblocks.com",
+        "verifiedDate": "2026-10-26"
+      },
+      {
+        "id": "coinbase-custody",
+        "name": "Coinbase Custody",
+        "category": "Кастодиальный",
+        "execution": 4.7,
+        "vision": 3.9,
+        "zone": "leaders",
+        "zoneName": "Лидеры",
+        "executionNote": "NYDFS Limited Purpose Trust Charter 2018 (CCTC), 80%+ рынка биткоин-ETF, аудит Deloitte",
+        "visionNote": "Широкая экосистема Coinbase Prime, ETF-инфраструктура, стейкинг",
+        "sourceUrl": "https://www.coinbase.com/prime/custody",
+        "verifiedDate": "2026-10-26"
+      },
+      {
+        "id": "anchorage",
+        "name": "Anchorage Digital",
+        "category": "Кастодиальный",
+        "execution": 4.5,
+        "vision": 3.6,
+        "zone": "leaders",
+        "zoneName": "Лидеры",
+        "executionNote": "Первый национальный криптобанк США: федеральный чартер OCC 25243 (2021); предписание C&D закрыто в 2025 г.",
+        "visionNote": "Эксклюзивное хранение в HSM банка без шардов клиенту, аппаратная биометрия",
+        "sourceUrl": "https://www.anchorage.com",
+        "verifiedDate": "2026-10-26"
+      },
+      {
+        "id": "ledger-enterprise",
+        "name": "Ledger Enterprise",
+        "category": "Аппаратный",
+        "execution": 4.0,
+        "vision": 4.1,
+        "zone": "leaders",
+        "zoneName": "Лидеры",
+        "executionNote": "Dedicated HSM EAL5+, 0 взломов Enterprise с 2019 г., клиент держит 100% ключей в HSM; вендор технологии",
+        "visionNote": "Аппаратная безопасность институционального уровня, основа для совместного предприятия Komainu",
+        "sourceUrl": "https://enterprise.ledger.com",
+        "verifiedDate": "2026-10-26"
+      },
+      {
+        "id": "komainu",
+        "name": "Komainu",
+        "category": "Кастодиальный",
+        "execution": 3.9,
+        "vision": 3.5,
+        "zone": "leaders",
+        "zoneName": "Лидеры",
+        "executionNote": "СП Nomura + Ledger + CoinShares. Регулируемый хранитель JFSC (Джерси) и регистрация FCA UK MLR",
+        "visionNote": "Два технологических контура на выбор банка: чипы HSM EAL5+ или MPC",
+        "sourceUrl": "https://www.komainu.com",
+        "verifiedDate": "2026-10-26"
+      },
+      {
+        "id": "dfns",
+        "name": "Dfns",
+        "category": "MPC",
+        "execution": 3.6,
+        "vision": 4.5,
+        "zone": "leaders",
+        "zoneName": "Лидеры",
+        "executionNote": "API-first WaaS, 0 инцидентов утечки ключей, ISO 27001/17/18 KPMG 2025; прямой кастодиальной лицензии нет",
+        "visionNote": "Модели развёртывания MPC 3-of-5: cloud, hybrid с правом вето клиента и on-premise",
+        "sourceUrl": "https://www.dfns.co",
+        "verifiedDate": "2026-10-26"
+      },
+      {
+        "id": "fordefi",
+        "name": "Fordefi",
+        "category": "MPC",
+        "execution": 3.4,
+        "vision": 4.6,
+        "zone": "visionaries",
+        "zoneName": "Провидцы",
+        "executionNote": "Execution 3.4 (меньше публичных банковских кейсов); SOC 2 Type II от EY, аудит NCC Group",
+        "visionNote": "Лидер в валидации и симуляции DeFi смарт-контрактов в реальном времени, AWS Nitro Enclaves",
+        "sourceUrl": "https://www.fordefi.com",
+        "verifiedDate": "2026-10-26"
+      }
+    ]
+  },
+  "vendorDossiers": [
+    {
+      "id": "fireblocks",
+      "name": "Fireblocks",
+      "logo": null,
+      "website": "https://www.fireblocks.com",
+      "founded": 2018,
+      "hq": "Нью-Йорк, США / Тель-Авив, Израиль",
+      "keyTech": "MPC-CMP (3-of-3 Vault, 2-of-2 Embedded)",
+      "category": "MPC",
+      "categorySecondary": "Встроенные кошельки (WaaS)",
+      "keyHolder": "Институциональный Vault: 3 доли MPC (подпись 3-of-3: 1 доля у клиента в enclave/SGX, 2 доли у Fireblocks в облачных co-signer на TEE). Полный ключ никогда не собирается. Fireblocks не имеет кворума подписать без клиента. В продукте Trust — холодное хранение у кастодиана",
+      "targetClients": "Банки (BNY Mellon), институциональные инвесторы (Galaxy, Revolut), финтехи",
+      "networks": "BTC, ETH, SOL и ещё 40+ блокчейн-сетей",
+      "regulatoryStatus": "NYDFS Limited Purpose Trust Charter (Fireblocks Trust Company LLC, август 2024). В списках OCC Trust Banks отсутствует (статуса OCC нет)",
+      "regulatorySource": "https://www.dfs.ny.gov/virtual_currency_businesses",
+      "verdict": "buy",
+      "zone": "leaders",
+      "claims": [
+        "Алгоритм MPC-CMP подписывает транзакции до 8 раз быстрее стандартных схем",
+        "Страховой полис $30 млн aggregate на внешний кибервзлом или мошенничество сотрудника",
+        "Более $10 трлн защищённых активов и свыше 550 млн сгенерированных кошельков",
+        "Гарантированный SLA 99.9% доступности сервиса 24/7/365"
+      ],
+      "verified": [
+        {
+          "fact": "SOC 2 Type II и SOC 1 Type II аудит от Ernst & Young (ежегодно с 2019 г.)",
+          "source": "https://trust.fireblocks.com/"
+        },
+        {
+          "fact": "Сертификация ISO/IEC 27001:2022, 27017:2015, 27018:2019",
+          "source": "https://trust.fireblocks.com/"
+        },
+        {
+          "fact": "CCSS Level 3 (Cryptocurrency Security Standard) — первый QSP Level 3 (Deloitte / Marc Krisjanous)",
+          "source": "https://www.coindesk.com/business/2022/12/19/crypto-custody-tech-provider-fireblocks-receives-first-of-its-kind-security-certificate"
+        },
+        {
+          "fact": "Открытая библиотека MPC-CMP (github.com/fireblocks/mpc-lib) и программа Bug Bounty HackerOne",
+          "source": "https://github.com/fireblocks/mpc-lib"
+        },
+        {
+          "fact": "Лицензия NYDFS Trust Company (Limited Purpose Trust Charter, Virtual Currency Business)",
+          "source": "https://www.dfs.ny.gov/virtual_currency_businesses"
+        }
+      ],
+      "incidents": [
+        {
+          "date": "2021-06",
+          "description": "Судебный иск StakeHound о потере доступа к 38 178 ETH: спор об управлении резервными копиями ключей стейкинга (суд в Израиле)",
+          "source": "https://www.coindesk.com/markets/2021/06/23/stakehound-sues-fireblocks-over-alleged-loss-of-38k-eth"
+        }
+      ],
+      "incidentNote": "Взломов криптографического ядра MPC-CMP и утечек ключей клиентов в открытых источниках не зафиксировано.",
+      "verifiedDate": "08.11.2026 18:41"
+    },
+    {
+      "id": "bitgo",
+      "name": "BitGo",
+      "logo": null,
+      "website": "https://www.bitgo.com",
+      "founded": 2013,
+      "hq": "Пало-Альто, США (BitGo Holdings Inc., NYSE: BTGO)",
+      "keyTech": "Мультиподпись 2-of-3 + TSS (DKLs23) + Cold HSM",
+      "category": "Кастодиальный",
+      "categorySecondary": "Self-custody wallets",
+      "keyHolder": "Каноническая схема 2-of-3: User key + BitGo key (HSM) + Backup key. В Self-custody: клиент держит 2 ключа. В Qualified custody: все 3 ключа у BitGo (геораспределены между офисами траста)",
+      "targetClients": "Банки, криптобиржи, институциональные инвесторы, ETF-провайдеры",
+      "networks": "BTC, ETH и ещё более 700 цифровых активов",
+      "regulatoryStatus": "Федеральный чартер OCC 25366 (BitGo Bank & Trust N.A.); трастовая лицензия NYDFS (2021); лицензия кастодиана BaFin (Германия, 50085544 / P019718018)",
+      "regulatorySource": "https://www.occ.gov/topics/charters-and-licensing/financial-institution-lists/trust-by-name.pdf",
+      "verdict": "buy",
+      "zone": "leaders",
+      "claims": [
+        "Синдицированный страховой полис $250 млн (Lloyd's of London syndicates)",
+        "Ноль потерь клиентских средств от внутренних взломов за всю историю",
+        "100% холодное хранение квалифицированного кастодиального траста",
+        "Федеральный надзор OCC и лицензия BaFin в Германии"
+      ],
+      "verified": [
+        {
+          "fact": "Федеральный чартер National Trust Bank в реестре OCC (чартер 25366)",
+          "source": "https://www.occ.gov/topics/charters-and-licensing/financial-institution-lists/trust-by-name.pdf"
+        },
+        {
+          "fact": "SOC 1 Type II и SOC 2 Type II ежегодно подтверждаются в финансовой отчётности Form 10-K",
+          "source": "https://www.sec.gov/Archives/edgar/data/1740604/000174060426000020/btgo-form10xk.htm"
+        },
+        {
+          "fact": "Лицензия BaFin на кастодиальную деятельность в Германии (ID 50085544)",
+          "source": "https://portal.mvp.bafin.de/database/InstInfo/sucheForm.do"
+        },
+        {
+          "fact": "Открытая реализация библиотеки пороговых подписей DKLs23 (TSS)",
+          "source": "https://github.com/BitGo"
+        }
+      ],
+      "incidents": [
+        {
+          "date": "2023-02",
+          "description": "Исследователи обнаружили уязвимость Zero Proof TSS в старой версии библиотеки; баг устранён до эксплойта, потерь средств не было",
+          "source": "https://www.bitgo.com/newsroom/press-releases/bitgo-statement-on-tss-vulnerability"
+        }
+      ],
+      "incidentNote": "Взлом Bitfinex (2016) произошёл через компрометацию серверов биржи с её API-ключами; инфраструктура BitGo взломана не была.",
+      "verifiedDate": "08.11.2026 18:41"
+    },
+    {
+      "id": "coinbase-custody",
+      "name": "Coinbase Custody",
+      "logo": null,
+      "website": "https://www.coinbase.com/prime/custody",
+      "founded": 2018,
+      "hq": "Нью-Йорк / Сан-Франциско, США (Coinbase Global, NASDAQ: COIN)",
+      "keyTech": "Air-gapped Cold Vault + HSM / MPC",
+      "category": "Кастодиальный",
+      "categorySecondary": null,
+      "keyHolder": "100% у кастодиана Coinbase Custody Trust Company (CCTC): геораспределённые холодные сейфы, MPC-шарды и консенсус k-of-n операторов. Клиент не хранит доли ключей",
+      "targetClients": "ETF-эмитенты (BlackRock, Grayscale, 8 из 11 спотовых BTC-ETF), пенсионные фонды",
+      "networks": "BTC, ETH, SOL и более 470 цифровых активов",
+      "regulatoryStatus": "NYDFS Limited Purpose Trust Charter с 2018 года (CCTC). В списках OCC Trust Banks отсутствует (действующего чартера OCC нет)",
+      "regulatorySource": "https://www.dfs.ny.gov/virtual_currency_businesses",
+      "verdict": "buy",
+      "zone": "leaders",
+      "claims": [
+        "Крупнейший институциональный кастодиан ETF в мире (более 80% рынка спотовых ETF)",
+        "Qualified Custodian с независимым аудитом Deloitte & Touche",
+        "Поддержка более 470 институциональных цифровых активов",
+        "Коммерческое страхование преступлений (Crime Insurance) пула активов"
+      ],
+      "verified": [
+        {
+          "fact": "Лицензия NYDFS Limited Purpose Trust Charter с 2018 года",
+          "source": "https://www.dfs.ny.gov/virtual_currency_businesses"
+        },
+        {
+          "fact": "SOC 1 Type II и SOC 2 Type II аудиторские заключения от Deloitte & Touche LLP",
+          "source": "https://www.coinbase.com/prime/custody"
+        },
+        {
+          "fact": "Публичная финансовая отчётность материнской компании Coinbase Global по форме 10-K (SEC)",
+          "source": "https://www.sec.gov/edgar/browse/?CIK=0001679788"
+        }
+      ],
+      "incidents": [
+        {
+          "date": "2023-01",
+          "description": "Мировое соглашение с NYDFS ($50 млн штраф + $50 млн инвестиции в комплаенс) по историческим замечаниям к процедурам мониторинга AML/KYC материнской биржи",
+          "source": "https://www.dfs.ny.gov/reports_and_publications/press_releases/pr202301041"
+        }
+      ],
+      "incidentNote": "Утечек ключей и потерь активов из институционального хранилища Coinbase Custody зафиксировано не было.",
+      "verifiedDate": "08.11.2026 18:41"
+    },
+    {
+      "id": "anchorage",
+      "name": "Anchorage Digital",
+      "logo": null,
+      "website": "https://www.anchorage.com",
+      "founded": 2017,
+      "hq": "Сан-Франциско, США",
+      "keyTech": "HSM Hardware Security Modules + аппаратный биометрический консенсус",
+      "category": "Кастодиальный",
+      "categorySecondary": "OCC National Bank",
+      "keyHolder": "Ключи исключительно в HSM банка Anchorage Digital Bank N.A.; доли клиенту не выдаются; подтверждение через аппаратные биометрические модули",
+      "targetClients": "Банки, суверенные фонды, институциональные инвесторы США",
+      "networks": "BTC, ETH и основные институциональные PoS-активы (включая стейкинг)",
+      "regulatoryStatus": "Первый федеральный криптобанк США: OCC National Bank Charter 25243 (январь 2021). NYDFS BitLicense 0000041",
+      "regulatorySource": "https://www.occ.gov/news-issuances/news-releases/2021/nr-occ-2021-6.html",
+      "verdict": "buy",
+      "zone": "leaders",
+      "claims": [
+        "Первый и единственный криптобанк с национальным федеральным чартером OCC",
+        "Исключение операционного риска клиента: банку не требуется собственное хранение ключей",
+        "Институциональная биометрия и аппаратный консенсус без сид-фраз"
+      ],
+      "verified": [
+        {
+          "fact": "Федеральный банковский чартер OCC 25243 (Anchorage Digital Bank, National Association)",
+          "source": "https://www.occ.gov/news-issuances/news-releases/2021/nr-occ-2021-6.html"
+        },
+        {
+          "fact": "SOC 1 Type II и SOC 2 Type II аудиторские заключения Ernst & Young",
+          "source": "https://www.anchorage.com/security"
+        },
+        {
+          "fact": "Прекращение предписания OCC Consent Order в 2025 году после полной модернизации AML/BSA контура",
+          "source": "https://www.occ.gov"
+        }
+      ],
+      "incidents": [
+        {
+          "date": "2022-04",
+          "description": "Предписание OCC Cease and Desist (2022–2025) касательно процедур финансового мониторинга и AML (успешно закрыто OCC в 2025 г.)",
+          "source": "https://www.occ.gov/static/enforcement-actions/ea2022-017.pdf"
+        }
+      ],
+      "incidentNote": "Взломов аппаратного хранилища HSM и утраты активов не зафиксировано.",
+      "verifiedDate": "2026-10-26"
+    },
+    {
+      "id": "ledger-enterprise",
+      "name": "Ledger Enterprise",
+      "logo": null,
+      "website": "https://enterprise.ledger.com",
+      "founded": 2014,
+      "hq": "Париж, Франция",
+      "keyTech": "Dedicated HSM (EAL5+) + Personal Security Devices (PSD) + OS BOLOS",
+      "category": "Аппаратный",
+      "categorySecondary": "Self-custody technology",
+      "keyHolder": "Клиент держит 100% ключей в выделенных институциональных HSM (EAL5+ / FIPS 140-2 Level 3). Ledger — поставщик технологии, доступа к ключам не имеет",
+      "targetClients": "Банки, кастодианы (в т.ч. СП Komainu), институциональные фонды",
+      "networks": "BTC, ETH, SOL и более 100 блокчейн-сетей",
+      "regulatoryStatus": "Технологический вендор self-custody решений. В реестрах OCC, NYDFS, AMF (как кастодиан) отсутствует — не принимает активы клиентов на баланс",
+      "regulatorySource": "https://enterprise.ledger.com",
+      "verdict": "buy",
+      "zone": "leaders",
+      "claims": [
+        "Ноль взломов и ноль потерянных активов на платформе Enterprise с 2019 года",
+        "Защищённый чип EAL5+ с аппаратным подтверждением экранной политики подписания",
+        "Институциональная криминальная страховка $150 млн"
+      ],
+      "verified": [
+        {
+          "fact": "SOC 2 Type II сертификация институциональной платформы Ledger Enterprise",
+          "source": "https://enterprise.ledger.com/trust-center"
+        },
+        {
+          "fact": "Аппаратная сертификация чипов Secure Element CC EAL5+ и французского ANSSI CSPN",
+          "source": "https://www.ssi.gouv.fr"
+        },
+        {
+          "fact": "Технологическая основа кастодиального контура для СП Nomura / Komainu",
+          "source": "https://enterprise.ledger.com/case-studies/komainu"
+        }
+      ],
+      "incidents": [
+        {
+          "date": "2023-12",
+          "description": "Утечка маркетинговой базы покупателей розничных устройств (2020) и компрометация Web3-библиотеки Connect Kit (2023). Корпоративный HSM контур затронут не был",
+          "source": "https://www.bleepingcomputer.com/news/security/ledger-dapp-supply-chain-attack-steals-600k-from-crypto-wallets/"
+        }
+      ],
+      "incidentNote": "Институциональная платформа Ledger Enterprise технологически изолирована от розничной экосистемы.",
+      "verifiedDate": "2026-10-26"
+    },
+    {
+      "id": "fordefi",
+      "name": "Fordefi",
+      "logo": null,
+      "website": "https://www.fordefi.com",
+      "founded": 2021,
+      "hq": "Тель-Авив, Израиль / Нью-Йорк, США",
+      "keyTech": "MPC (2-party ECDSA/EdDSA) + AWS Nitro Enclaves + DeFi Transaction Engine",
+      "category": "MPC",
+      "categorySecondary": "DeFi Institutional Platform",
+      "keyHolder": "MPC 2-party: 1 доля у Fordefi в AWS Nitro Enclave, 1 доля в мобильном анклаве/клиенте. Подписание транзакций с парсингом DeFi смарт-контрактов",
+      "targetClients": "Институциональные DeFi-фонды, маркетмейкеры, финтех-платформы",
+      "networks": "90+ EVM, Cosmos, Solana и других сетей",
+      "regulatoryStatus": "Технологический провайдер MPC. Кастодиальных лицензий OCC, NYDFS, AMF, BaFin не имеет",
+      "regulatorySource": "https://www.fordefi.com",
+      "verdict": "hold",
+      "zone": "visionaries",
+      "claims": [
+        "Первый институциональный MPC-кошелек с симуляцией и валидацией DeFi смарт-контрактов",
+        "Поддержка 90+ блокчейн-сетей",
+        "300+ институциональных клиентов, более  млрд месячного оборота"
+      ],
+      "verified": [
+        {
+          "fact": "SOC 2 Type II аудит от Ernst & Young (март 2023, ежегодное продление)",
+          "source": "https://www.fordefi.com/security"
+        },
+        {
+          "fact": "Аудит криптографического ядра MPC от независимых компаний NCC Group и Kudelski Security",
+          "source": "https://www.fordefi.com/security"
+        }
+      ],
+      "incidents": [],
+      "incidentNote": "Публичных инцидентов безопасности или взломов протокола в открытых источниках не зафиксировано.",
+      "verifiedDate": "2026-10-26"
+    },
+    {
+      "id": "dfns",
+      "name": "Dfns",
+      "logo": null,
+      "website": "https://www.dfns.co",
+      "founded": 2020,
+      "hq": "Париж, Франция",
+      "keyTech": "API-first MPC Wallet-as-a-Service + WebAuthn/Passkey",
+      "category": "MPC",
+      "categorySecondary": "Wallet-as-a-Service",
+      "keyHolder": "MPC 3-of-5 по умолчанию (доли в защищенных анклавах Dfns) либо гибридная схема (1 доля у клиента с правом вето) или On-prem развертывание",
+      "targetClients": "Финтехи, необанки, платформы встроенных финансов (Triple-A, Nvstr)",
+      "networks": "BTC, EVM, Solana и основные L1/L2 сети",
+      "regulatoryStatus": "Технологический поставщик ПО. Прямой кастодиальной лицензии CASP материнской компании в открытом реестре AMF нет (клиент Triple-A имеет CASP, используя Dfns как ПО)",
+      "regulatorySource": "https://www.dfns.co",
+      "verdict": "hold",
+      "zone": "leaders",
+      "claims": [
+        "0 инцидентов безопасности, 0 утерь ключей клиентов с 2020 года",
+        "Субсекундное подписание транзакций, облачная интеграция за 1 день",
+        "Аутентификация через биометрию и Passkeys без необходимости сид-фраз"
+      ],
+      "verified": [
+        {
+          "fact": "SOC 2 Type II аудит соответствия безопасности",
+          "source": "https://www.dfns.co/security"
+        },
+        {
+          "fact": "ISO/IEC 27001:2022, 27017, 27018 сертификация аудитором KPMG / MSECB (2025)",
+          "source": "https://www.dfns.co/security"
+        },
+        {
+          "fact": "Ежеквартальные внешние пентесты и криптоаудиты: Halborn, Kudelski, Quarkslab",
+          "source": "https://www.dfns.co/security"
+        }
+      ],
+      "incidents": [],
+      "incidentNote": "Инцидентов утечки ключей или взломов инфраструктуры не зафиксировано.",
+      "verifiedDate": "2026-10-26"
+    },
+    {
+      "id": "komainu",
+      "name": "Komainu",
+      "logo": null,
+      "website": "https://www.komainu.com",
+      "founded": 2018,
+      "hq": "Джерси (совместное предприятие Nomura, Ledger и CoinShares)",
+      "keyTech": "Ledger Vault HSM EAL5+ + Air-gapped Cold Storage + MPC",
+      "category": "Кастодиальный",
+      "categorySecondary": "Joint Venture Custodian",
+      "keyHolder": "100% у кастодиана Komainu. Выбор между HSM (чипы EAL5+ на технологиях Ledger Vault) и MPC. Геораспределенные офлайн хранилища",
+      "targetClients": "Инвестиционные банки, хедж-фонды, институциональные управляющие активами",
+      "networks": "BTC, ETH, основные институциональные активы",
+      "regulatoryStatus": "JFSC Регулируемый хранитель и депозитарий (Джерси, FSB2292 / SCH2158); FCA UK регистрация по правилам MLR (FRN 985974); VARA (Дубай)",
+      "regulatorySource": "https://www.jerseyfsc.org/industry/regulated-entities/entity/87404",
+      "verdict": "buy",
+      "zone": "leaders",
+      "claims": [
+        "Банковский уровень кастоди, созданный банком (Nomura) для институционалов",
+        "Сертификации SOC 1/2 Type II и ISO 27001",
+        "Хранение сид-материалов в распределённых банковских депозитариях"
+      ],
+      "verified": [
+        {
+          "fact": "Регуляторная авторизация JFSC (Jersey Financial Services Commission, ID 87404)",
+          "source": "https://www.jerseyfsc.org/industry/regulated-entities/entity/87404"
+        },
+        {
+          "fact": "Регистрация в FCA UK по регламенту противодействия отмыванию денег (FRN 985974)",
+          "source": "https://register.fca.org.uk/s/search?q=985974"
+        },
+        {
+          "fact": "Лицензия поставщика виртуальных активов VARA (Дубай)",
+          "source": "https://komainu.com/entities/"
+        },
+        {
+          "fact": "Заявлены сертификаты SOC 1/2 Type II и ISO 27001",
+          "source": "https://komainu.com/expertise/security/"
+        }
+      ],
+      "incidents": [],
+      "incidentNote": "Публичных взломов и потерь активов в открытых источниках не зафиксировано.",
+      "verifiedDate": "2026-10-26"
+    }
+  ],
+  "sources": {
+    "trusted": [
+      {
+        "category": "Реестры регуляторов и лицензии",
+        "examples": "OCC National Trust Banks (чартеры 25366 BitGo, 25243 Anchorage), NYDFS Virtual Currency (Fireblocks, Coinbase), BaFin (Германия, 50085544), JFSC (Джерси), FCA UK MLR",
+        "usedFor": "Проверка законности и регуляторного статуса квалифицированных кастодианов"
+      },
+      {
+        "category": "Регуляторные нормативные акты",
+        "examples": "Письмо OCC Interpretive Letter 1183 (07.03.2025, право банков на кастоди), Регламент ЕС MiCA 2023/1114 ст. 75 (правила CASP)",
+        "usedFor": "Обоснование правовой основы для внедрения криптоактивов в банке"
+      },
+      {
+        "category": "Технические стандарты и спецификации",
+        "examples": "NIST IR 8214C (MPC schemes), FIPS 204/205 (PQC), EIP-4337 (Smart Accounts), W3C WebAuthn Level 3, EIP-7951, BIP-32/39/360, CGGMP21 (IACR 2021/060)",
+        "usedFor": "Анализ технологической зрелости, кривая Gartner Hype Cycle"
+      },
+      {
+        "category": "Независимые аудиторские отчёты и Trust Centers",
+        "examples": "SOC 1/2 Type II от Big-4 (Ernst & Young для Fireblocks/Fordefi/Anchorage, Deloitte для Coinbase), ISO 27001/17/18 (KPMG для Dfns), CCSS Level 3",
+        "usedFor": "Верификация фактов безопасности, разделение маркетинга и аудита"
+      },
+      {
+        "category": "Публичные постмортемы и реестры инцидентов",
+        "examples": "Анализ взлома Bybit Safe{Wallet} (2025, ,5 млрд), инцидент Ledger Connect Kit (2023), отчет BitForge о протоколах GG18/GG20, материалы судов и SEC",
+        "usedFor": "Оценка операционных рисков и журнал безопасности вендоров"
+      }
+    ],
+    "excluded": [
+      {
+        "category": "Закрытые платные отчёты за paywall",
+        "reason": "Gartner, Forrester, IDC — требуют платной подписки, банк не может открыто приложить первоисточник к защите бюджета"
+      },
+      {
+        "category": "Анонимные телеграм-каналы и слухи",
+        "reason": "Непроверяемые утечки и инсайды без подтверждения регулятором или аудитором"
+      },
+      {
+        "category": "Маркетинговые лендинги без аудиторского подтверждения",
+        "reason": "Слоганы вендоров («military-grade», «100% unhackable») без приложенного SOC 2 или открытого кода"
+      },
+      {
+        "category": "Розничные некастодиальные кошельки",
+        "reason": "MetaMask, Phantom, Trust Wallet — не являются банковской инфраструктурой и исключены из контура закупки"
+      }
+    ]
+  },
+  "aiCopilot": {
+    "model": "InDan Reasoning Engine v2.4 (Gartner-aligned)",
+    "presetPrompts": [
+      "Почему у Fireblocks нет статуса OCC (в отличие от BitGo), а схема Vault — 3-of-3, а не 2-of-3?",
+      "Сформируй бриф для Правления банка по выбору между Direct MPC Vault и Qualified Custody",
+      "Почему 6 из 8 технологий на Склоне или Плато, но квантовые подписи банк пока не закупает?",
+      "Какие требования накладывает регламент MiCA на кастодиальные сервисы для банков ЕС?"
+    ],
+    "sampleMemo": {
+      "title": "Инвестиционный бриф: Выбор архитектуры криптокошельков для банка",
+      "verifiedCitations": "8 первоисточников (OCC, NYDFS, MiCA, EY, Deloitte, W3C)",
+      "bullets": [
+        "Жёсткое разделение на 2 контура: клиентский (MPC Direct Vault 3-of-3) и казначейский (квалифицированный кастодиан с лицензией OCC / BaFin)",
+        "Флагманы шорт-листа: BitGo (национальный трастовый чартер OCC 25366, схема 2-of-3, BaFin) и Fireblocks (NYDFS Trust, ежегодный SOC 2 Type II от EY)",
+        "Правовая база устоялась: подтверждено письмом OCC IL 1183 (отмена согласований) и европейским регламентом MiCA ст. 75",
+        "6 из 8 технологий на Склоне прояснения или Плато; постквантовые подписи (Запуск, 5+ лет) и розничные кошельки выведены из текущего бюджета закупки"
+      ]
+    }
+  }
+}
